@@ -42,7 +42,6 @@ dependencies {
     implementation(libs.exposed.dao)
     implementation(libs.exposed.kotlin.datetime)
     implementation(libs.exposed.jdbc)
-    implementation(libs.exposed.r2dbc)
     implementation(libs.exposed.migrations.core)
     implementation(libs.exposed.migrations.jdbc)
     implementation(libs.db.driver.h2)
