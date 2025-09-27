@@ -14,7 +14,6 @@ fun Application.module() {
     configureErrorHandling()
     configureMonitoring()
     configureDatabase()
-    configureServices()
 
     routing {
         get {

@@ -4,7 +4,8 @@ package com.osucad.server.database
 
 import com.osucad.server.DatabaseConfig
 import com.osucad.server.MIGRATIONS_DIRECTORY
-import org.flywaydb.core.Flyway
+import com.osucad.server.connect
+import com.osucad.server.runMigrations
 import org.jetbrains.exposed.v1.core.ExperimentalDatabaseMigrationApi
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -27,26 +28,9 @@ fun main(args: Array<String>) {
         password = "",
     )
 
-    val h2db = Database.connect(
-        url = config.url,
-        driver = config.driver,
-        user = config.user,
-        password = config.password,
-    )
+    val h2db = Database.connect(config)
 
-    val flyway = Flyway.configure()
-        .dataSource(
-            config.url,
-            config.user,
-            config.password,
-        )
-        .locations("filesystem:$MIGRATIONS_DIRECTORY")
-        .baselineOnMigrate(true)
-        .load()
-
-    transaction(h2db) {
-        flyway.migrate()
-    }
+    runMigrations(h2db, config)
 
     transaction(h2db) {
         generateMigrationScript(migrationName)

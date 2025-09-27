@@ -2,7 +2,8 @@ ktor:
   application:
     modules:
       - com.osucad.server.ApplicationKt.module
-      - com.osucad.server.modules.users.UsersModuleKt.usersModule
+      - com.osucad.server.modules.users.ModuleKt.usersModule
+      - com.osucad.server.modules.osu.ModuleKt.osuModule
 
   deployment:
     port: 8080

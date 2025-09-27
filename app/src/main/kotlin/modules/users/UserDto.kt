@@ -15,3 +15,5 @@ object UserMapper : ObjectMappie<User, UserDto>() {
         UserDto::id fromProperty User::id transform { it.value }
     }
 }
+
+fun User.toDto() = UserMapper.map(this)

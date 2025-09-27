@@ -1,4 +1,4 @@
-package com.osucad.server.services
+package com.osucad.server.modules.osu
 
 import com.osucad.osuapi.OsuApiV2
 

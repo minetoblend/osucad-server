@@ -1,10 +1,9 @@
-package com.osucad.server
+package com.osucad.server.modules.osu
 
-import com.osucad.server.services.OsuApiFactory
 import io.ktor.server.application.*
 import io.ktor.server.plugins.di.*
 
-fun Application.configureServices() {
+fun Application.osuModule() {
     dependencies {
         provide<OsuApiFactory> { OsuApiFactory.Default }
     }

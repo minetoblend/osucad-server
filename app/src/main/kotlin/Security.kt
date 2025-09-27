@@ -1,8 +1,8 @@
 package com.osucad.server
 
 import com.osucad.osuapi.models.OsuApiUser
-import com.osucad.server.services.IUserService
-import com.osucad.server.services.OsuApiFactory
+import com.osucad.server.modules.osu.OsuApiFactory
+import com.osucad.server.modules.users.IUserService
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.events.EventDefinition
@@ -21,14 +21,18 @@ private const val osu_oauth = "oauth-osu"
 object LoginEvent : EventDefinition<OsuApiUser>()
 
 @Serializable
-class UserSession(val userId: Int, val accessToken: String)
+data class UserSession(val userId: Int, val accessToken: String)
+
+class UserPrincipal(
+    val userId: Int,
+)
 
 fun Application.configureSecurity() {
     @Serializable
     class OAuthConfig(
         val redirectUrl: String,
         val clientId: String,
-        val clientSecret: String
+        val clientSecret: String,
     )
 
     val config: OAuthConfig = property("oauth")
@@ -45,7 +49,7 @@ fun Application.configureSecurity() {
 
     authentication {
         session<UserSession> {
-            validate { session -> session }
+            validate { session -> UserPrincipal(session.userId) }
             challenge {
                 call.respondRedirect("/auth/osu/login")
             }

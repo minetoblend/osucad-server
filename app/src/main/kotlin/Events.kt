@@ -43,7 +43,7 @@ class EventBus {
         handler: EventHandler<T>
     ): DisposableHandle {
         val registration = HandlerRegistration(handler)
-        handlers.computeIfAbsent(definition) { LockFreeLinkedListHead() }
+        handlers.computeIfAbsent(definition) { LockFreeLinkedListHead() }.addLast(registration)
 
         return registration
     }

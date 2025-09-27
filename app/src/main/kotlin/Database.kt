@@ -1,13 +1,16 @@
 package com.osucad.server
 
+import com.osucad.server.utils.ITransactionProvider
+import com.osucad.server.utils.TransactionProvider
 import io.ktor.server.application.*
 import io.ktor.server.config.*
 import io.ktor.server.plugins.di.*
 import kotlinx.serialization.Serializable
 import org.flywaydb.core.Flyway
-import org.jetbrains.exposed.v1.r2dbc.R2dbcDatabase
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
-const val MIGRATIONS_DIRECTORY = "app/src/main/kotlin/migrations"
+const val MIGRATIONS_DIRECTORY = "src/main/kotlin/migrations"
 
 @Serializable
 class DatabaseConfig(
@@ -24,21 +27,21 @@ class FlywayConfig(
     val password: String,
 )
 
-fun Application.configureDatabase() {
-    val config: DatabaseConfig = property("database")
+fun Application.configureDatabase(config: DatabaseConfig = property("database")) {
+    val database = Database.connect(config)
 
-    val database = R2dbcDatabase.connect(config)
-
-    runMigrations()
+    runMigrations(database, config)
 
     dependencies {
-        provide<R2dbcDatabase> { database }
+        provide<Database> { database }
+        provide<ITransactionProvider> { TransactionProvider(database) }
     }
 }
 
-fun Application.runMigrations() {
-    val config: FlywayConfig = property("flyway")
-
+fun runMigrations(
+    database: Database,
+    config: DatabaseConfig,
+) {
     val flyway = Flyway.configure()
         .dataSource(
             config.url,
@@ -49,10 +52,12 @@ fun Application.runMigrations() {
         .baselineOnMigrate(true)
         .load()
 
-    flyway.migrate()
+    transaction(database) {
+        flyway.migrate()
+    }
 }
 
-fun R2dbcDatabase.Companion.connect(config: DatabaseConfig) = R2dbcDatabase.connect(
+fun Database.Companion.connect(config: DatabaseConfig) = Database.connect(
     url = config.url,
     driver = config.driver,
     user = config.user,
