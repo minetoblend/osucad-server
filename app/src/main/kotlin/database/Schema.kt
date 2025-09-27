@@ -11,7 +11,7 @@ val tables = arrayOf<Table>(
     UsersTable,
 )
 
-object UsersTable : IntIdTable() {
+object UsersTable : IntIdTable("users") {
     val username = varchar("username", 255)
     val lastLoginTime = timestamp("last_login_time").nullable()
 }
