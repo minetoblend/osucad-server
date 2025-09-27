@@ -48,7 +48,6 @@ fun runMigrations(dataSource: DataSource) {
     val flyway = Flyway.configure()
         .dataSource(dataSource)
         .locations("filesystem:$MIGRATIONS_DIRECTORY")
-        .baselineOnMigrate(true)
         .executeInTransaction(true)
         .load()
 
