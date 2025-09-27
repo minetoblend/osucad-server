@@ -46,9 +46,8 @@ fun Application.configureSecurity() {
             cookie.httpOnly = true
         }
     }
-
-
-
+    
+    val redirects = mutableMapOf<String, String>()
     authentication {
         session<UserSession> {
             validate { session -> UserPrincipal(session.userId) }
@@ -64,7 +63,12 @@ fun Application.configureSecurity() {
                     requestMethod = HttpMethod.Post,
                     clientId = config.clientId,
                     clientSecret = config.clientSecret,
-                    defaultScopes = listOf("identify")
+                    defaultScopes = listOf("identify"),
+                    onStateCreated = { call, state ->
+                        call.parameters["redirectUrl"]?.let {
+                            redirects[state] = it
+                        }
+                    }
                 )
             }
             client = HttpClient(CIO)
@@ -98,7 +102,7 @@ fun Application.configureSecurity() {
 
                     call.sessions.set(UserSession(userId = user.id, accessToken = principal.accessToken))
 
-                    call.respondRedirect("/")
+                    call.respondRedirect(redirects.remove(principal.state) ?: "/")
                 }
             }
         }
