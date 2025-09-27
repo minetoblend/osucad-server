@@ -26,7 +26,7 @@ interface OsuApiV2 {
 
 fun OsuApiV2(
     accessToken: String,
-    baseUrl: String = "https://osu/ppy.sh/api/v2/",
+    baseUrl: String = "https://osu.ppy.sh/api/v2/",
     engine: HttpClientEngine = CIO.create(),
 ): OsuApiV2 {
     val ktorfit = ktorfit {

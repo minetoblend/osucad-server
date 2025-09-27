@@ -4,7 +4,7 @@ import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.JdbcTransaction
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
-interface ITransactionProvider {
+interface TransactionProvider {
     fun <T> withTransaction(statement: JdbcTransaction.() -> T): T
 
     fun <T> withTransaction(
@@ -26,7 +26,7 @@ interface ITransactionProvider {
     )
 }
 
-class TransactionProvider(private val database: Database) : ITransactionProvider {
+class DefaultTransactionProvider(private val database: Database) : TransactionProvider {
     override fun <T> withTransaction(statement: JdbcTransaction.() -> T): T =
         transaction(database, statement)
 
@@ -36,3 +36,5 @@ class TransactionProvider(private val database: Database) : ITransactionProvider
         statement: JdbcTransaction.() -> T,
     ): T = transaction(transactionIsolation, readOnly, database, statement)
 }
+
+fun Database.asTransactionProvider() = DefaultTransactionProvider(this)

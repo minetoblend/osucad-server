@@ -1,4 +1,4 @@
-package com.osucad.server
+package com.osucad.server.utils
 
 import io.ktor.server.routing.*
 import io.ktor.utils.io.*

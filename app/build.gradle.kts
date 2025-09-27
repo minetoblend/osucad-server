@@ -1,15 +1,19 @@
 plugins {
     id("buildsrc.convention.kotlin-jvm")
 
-    alias(libs.plugins.kotlinPluginSerialization)
+    alias(libs.plugins.kotlin.serialization)
     alias(ktorLibs.plugins.ktor)
     alias(libs.plugins.mappie)
+    alias(libs.plugins.kotest)
 }
 
 application {
     mainClass = "io.ktor.server.netty.EngineMain"
 }
 
+ktor {
+    development.set(true)
+}
 
 dependencies {
     implementation(project(":libs:osu-api"))
@@ -29,10 +33,10 @@ dependencies {
     implementation(ktorLibs.server.rateLimit)
     implementation(ktorLibs.server.statusPages)
     implementation(ktorLibs.server.metrics.micrometer)
-    implementation(libs.micrometer.registry.prometheus)
     implementation(ktorLibs.serialization.kotlinx.json)
     implementation(ktorLibs.client.core)
     implementation(ktorLibs.client.cio)
+    implementation(libs.micrometer.registry.prometheus)
     implementation(libs.logback)
     implementation(libs.exposed.core)
     implementation(libs.exposed.dao)
@@ -41,14 +45,17 @@ dependencies {
     implementation(libs.exposed.r2dbc)
     implementation(libs.exposed.migrations.core)
     implementation(libs.exposed.migrations.jdbc)
-    implementation(libs.h2)
-    implementation(libs.flyway)
+    implementation(libs.db.driver.h2)
+    implementation(libs.db.driver.postgres)
+    implementation(libs.flyway.core)
+    implementation(libs.flyway.postgresql)
     implementation(libs.mappie)
+    implementation(libs.hikaricp)
 
+    testImplementation(libs.bundles.test.ktor)
     testImplementation(ktorLibs.server.testHost)
-    testImplementation(ktorLibs.client.mock)
-    testImplementation(libs.kotlin.test)
-    testImplementation(libs.kotest.frameworkEngine)
-    testImplementation(libs.kotest.assertions.core)
-    testImplementation(libs.kotest.assertions.ktor)
+}
+
+tasks.named("buildOpenApi") {
+    enabled = false
 }

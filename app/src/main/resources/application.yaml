@@ -14,12 +14,7 @@ oauth:
   clientSecret: $OSU_OAUTH_CLIENT_SECRET
 
 database:
-  url: r2dbc:h2:mem:///test;DB_CLOSE_DELAY=-1
-  driver: h2
-  user: root
-  password: ''
-
-flyway:
   url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
+  driver: org.h2.Driver
   user: root
   password: ''

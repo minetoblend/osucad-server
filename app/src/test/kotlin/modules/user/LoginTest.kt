@@ -1,10 +1,10 @@
 package modules.user
 
 import com.osucad.osuapi.models.OsuApiUser
-import com.osucad.server.LoginEvent
-import com.osucad.server.eventBus
 import com.osucad.server.modules.users.IUserService
 import com.osucad.server.modules.users.usersModule
+import com.osucad.server.plugins.LoginEvent
+import com.osucad.server.plugins.eventBus
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull

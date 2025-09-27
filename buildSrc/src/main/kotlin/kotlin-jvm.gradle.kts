@@ -14,10 +14,6 @@ kotlin {
             "-Xcontext-parameters",
             "-Xcontext-sensitive-resolution",
         )
-        optIn.addAll(
-            "kotlinx.serialization.ExperimentalSerializationApi",
-            "kotlin.time.ExperimentalTime"
-        )
     }
 }
 

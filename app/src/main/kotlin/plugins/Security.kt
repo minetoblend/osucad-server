@@ -1,8 +1,12 @@
-package com.osucad.server
+@file:OptIn(ExperimentalTime::class)
+
+package com.osucad.server.plugins
 
 import com.osucad.osuapi.models.OsuApiUser
 import com.osucad.server.modules.osu.OsuApiFactory
 import com.osucad.server.modules.users.IUserService
+import com.osucad.server.security.UserPrincipal
+import com.osucad.server.utils.expectNotNull
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.events.EventDefinition
@@ -15,6 +19,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 private const val osu_oauth = "oauth-osu"
 
@@ -22,10 +28,6 @@ object LoginEvent : EventDefinition<OsuApiUser>()
 
 @Serializable
 data class UserSession(val userId: Int, val accessToken: String)
-
-class UserPrincipal(
-    val userId: Int,
-)
 
 fun Application.configureSecurity() {
     @Serializable
@@ -50,9 +52,6 @@ fun Application.configureSecurity() {
     authentication {
         session<UserSession> {
             validate { session -> UserPrincipal(session.userId) }
-            challenge {
-                call.respondRedirect("/auth/osu/login")
-            }
         }
 
         oauth(osu_oauth) {
@@ -83,15 +82,21 @@ fun Application.configureSecurity() {
                 }
 
                 get("callback") {
-                    call.principal<OAuthAccessTokenResponse.OAuth2>()?.let { (accessToken) ->
-                        val user = osuApi.create(accessToken).me()
+                    val principal = call.principal<OAuthAccessTokenResponse.OAuth2>()
+                        .expectNotNull("Expected oauth2 token principal")
 
-                        log.info("User {} logged in via oauth", user.username)
+                    val user = osuApi.create(principal.accessToken).me()
 
-                        eventBus.publish(LoginEvent, user)
+                    log.info("User {} logged in via oauth", user.username)
 
-                        call.sessions.set(UserSession(userId = user.id, accessToken = accessToken))
+                    userService.createOrUpdate(user.id) {
+                        username = user.username
+                        lastLoginTime = Clock.System.now()
                     }
+
+                    eventBus.publish(LoginEvent, user)
+
+                    call.sessions.set(UserSession(userId = user.id, accessToken = principal.accessToken))
 
                     call.respondRedirect("/")
                 }

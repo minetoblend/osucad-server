@@ -1,4 +1,4 @@
-package com.osucad.server
+package com.osucad.server.plugins
 
 import io.ktor.http.*
 import io.ktor.server.application.*

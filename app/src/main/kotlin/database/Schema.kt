@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.osucad.server.database
 
 import org.jetbrains.exposed.v1.core.Table

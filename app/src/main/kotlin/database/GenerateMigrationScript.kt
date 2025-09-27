@@ -2,10 +2,11 @@
 
 package com.osucad.server.database
 
-import com.osucad.server.DatabaseConfig
-import com.osucad.server.MIGRATIONS_DIRECTORY
-import com.osucad.server.connect
-import com.osucad.server.runMigrations
+import com.osucad.server.plugins.DatabaseConfig
+import com.osucad.server.plugins.MIGRATIONS_DIRECTORY
+import com.osucad.server.plugins.runMigrations
+import com.osucad.server.utils.toHikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import org.jetbrains.exposed.v1.core.ExperimentalDatabaseMigrationApi
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
@@ -21,28 +22,25 @@ fun main(args: Array<String>) {
         readln()
     }
 
-    val config = DatabaseConfig(
-        url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
-        driver = "org.h2.Driver",
-        user = "root",
-        password = "",
-    )
+    val dataSource = HikariDataSource(DatabaseConfig.Presets.H2.toHikariConfig())
 
-    val h2db = Database.connect(config)
+    runMigrations(dataSource)
 
-    runMigrations(h2db, config)
+    val db = Database.connect(dataSource)
 
-    transaction(h2db) {
+    transaction(db) {
         generateMigrationScript(migrationName)
     }
 }
 
-private fun generateMigrationScript(migrationName: String) {
-    val lastMigrationIndex = File(MIGRATIONS_DIRECTORY)
+private fun lastMigrationVersion(): Int? =
+    File(MIGRATIONS_DIRECTORY)
         .listFiles()
         .mapNotNull { it.name.split("__").firstOrNull() }
         .firstNotNullOfOrNull { it.trimStart('V').toIntOrNull() }
-        ?: 0
+
+private fun generateMigrationScript(migrationName: String) {
+    val lastMigrationIndex = lastMigrationVersion() ?: 0
 
     val migrationIndex = lastMigrationIndex + 1
 

@@ -4,7 +4,7 @@
     <module name="osucad-server.app.main" />
     <option name="PROGRAM_PARAMETERS" value="&quot;$Prompt:Migration Name$&quot;" />
     <shortenClasspath name="NONE" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
