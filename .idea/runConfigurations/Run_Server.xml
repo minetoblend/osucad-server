@@ -1,0 +1,23 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run Server" type="KtorApplicationConfigurationType" factoryName="Ktor">
+    <envs>
+      <env name="OSU_OAUTH_REDIRECT_URL" value="http://localhost:8080/auth/osu/callback" />
+      <env name="OSU_OAUTH_CLIENT_ID" value="31632" />
+      <env name="OSU_OAUTH_CLIENT_SECRET" value="ldT0EfeM5vfTlgCuuwau6RA5W16MUGuXhIr3Z3U1" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.osucad.server.ApplicationKt" />
+    <module name="osucad-server.app.main" />
+    <option name="alternativeJrePath" />
+    <option name="alternativeJrePathEnabled" value="false" />
+    <option name="includeProvidedScope" value="false" />
+    <option name="mainClass" value="com.osucad.server.ApplicationKt" />
+    <option name="passParentEnvs" value="true" />
+    <option name="programParameters" value="" />
+    <option name="shortenCommandLine" />
+    <option name="vmParameters" />
+    <option name="workingDirectory" value="C:\Users\minet\dev\osucad-backend\osucad-server\osucad-server" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -1,0 +1,24 @@
+package com.osucad.server
+
+import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+
+fun main(args: Array<String>) {
+    io.ktor.server.netty.EngineMain.main(args)
+}
+
+fun Application.module() {
+    configureHTTP()
+    configureSecurity()
+    configureErrorHandling()
+    configureMonitoring()
+    configureDatabase()
+    configureServices()
+
+    routing {
+        get {
+            call.respond("Hello, world!")
+        }
+    }
+}
