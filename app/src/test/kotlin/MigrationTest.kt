@@ -10,7 +10,7 @@ import org.testcontainers.containers.PostgreSQLContainer
 
 class MigrationTest : FunSpec({
     test("Database matches expected schema after migrations are run") {
-        val postgres = PostgreSQLContainer("postgres:16-alpine").apply {
+        val postgres = PostgreSQLContainer("postgres:18-alpine").apply {
             startupAttempts = 1
             start()
         }
