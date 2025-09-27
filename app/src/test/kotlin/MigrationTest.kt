@@ -3,8 +3,10 @@ import com.osucad.server.plugins.runMigrations
 import com.zaxxer.hikari.HikariDataSource
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldNotBeEmpty
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.vendors.currentDialectMetadata
 import org.jetbrains.exposed.v1.migration.jdbc.MigrationUtils
 import org.testcontainers.containers.PostgreSQLContainer
 
@@ -16,11 +18,17 @@ class MigrationTest : FunSpec({
         }
 
         val dataSource = HikariDataSource(postgres.toHikariConfig())
-
-        runMigrations(dataSource)
-
         val db = Database.connect(dataSource)
 
+        val statementsBeforeMigration = transaction(db) {
+            MigrationUtils.statementsRequiredForDatabaseMigration(*tables, withLogs = false)
+                .also { currentDialectMetadata.resetCaches() }
+        }
+
+        statementsBeforeMigration.shouldNotBeEmpty()
+
+        runMigrations(dataSource)
+        
         val statements = transaction(db) {
             MigrationUtils.statementsRequiredForDatabaseMigration(*tables, withLogs = false)
         }
