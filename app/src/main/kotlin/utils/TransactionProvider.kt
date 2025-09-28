@@ -26,7 +26,7 @@ interface TransactionProvider {
     )
 }
 
-class DefaultTransactionProvider(private val database: Database) : TransactionProvider {
+class DatabaseTransactionProvider(private val database: Database) : TransactionProvider {
     override fun <T> withTransaction(statement: JdbcTransaction.() -> T): T =
         transaction(database, statement)
 
@@ -37,4 +37,4 @@ class DefaultTransactionProvider(private val database: Database) : TransactionPr
     ): T = transaction(transactionIsolation, readOnly, database, statement)
 }
 
-fun Database.asTransactionProvider() = DefaultTransactionProvider(this)
+fun Database.asTransactionProvider() = DatabaseTransactionProvider(this)

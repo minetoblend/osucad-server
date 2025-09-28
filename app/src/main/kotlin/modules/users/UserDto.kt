@@ -12,7 +12,7 @@ class UserDto(
 
 object UserMapper : ObjectMappie<User, UserDto>() {
     override fun map(from: User): UserDto = mapping {
-        UserDto::id fromProperty User::id transform { it.value }
+        to::id fromProperty from::id transform { it.value }
     }
 }
 

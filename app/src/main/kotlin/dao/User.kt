@@ -2,6 +2,7 @@
 
 package com.osucad.server.dao
 
+import com.osucad.server.database.BeatmapSetsTable
 import com.osucad.server.database.UsersTable
 import org.jetbrains.exposed.v1.core.dao.id.EntityID
 import org.jetbrains.exposed.v1.dao.IntEntity
@@ -13,4 +14,6 @@ class User(id: EntityID<Int>) : IntEntity(id) {
 
     var username by UsersTable.username
     var lastLoginTime by UsersTable.lastLoginTime
+
+    val beatmapSets by BeatmapSet referrersOn BeatmapSetsTable.creatorId
 }
