@@ -37,7 +37,8 @@ private fun lastMigrationVersion(): Int? =
     File(MIGRATIONS_DIRECTORY)
         .listFiles()
         .mapNotNull { it.name.split("__").firstOrNull() }
-        .firstNotNullOfOrNull { it.trimStart('V').toIntOrNull() }
+        .mapNotNull { it.trimStart('V').toIntOrNull() }
+        .maxOrNull()
 
 private fun generateMigrationScript(migrationName: String) {
     val lastMigrationIndex = lastMigrationVersion() ?: 0

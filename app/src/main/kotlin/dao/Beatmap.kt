@@ -14,6 +14,8 @@ class Beatmap(id: EntityID<Int>) : IntEntity(id) {
     var beatmapSet by BeatmapSet referencedOn BeatmapsTable.beatmapSetId
     var beatmapSetId by BeatmapsTable.id
 
+    var document by Document referencedOn BeatmapsTable.documentId
+
     var difficultyOwner by User optionalReferencedOn BeatmapsTable.difficultyOwnerId
 
     var createdAt by BeatmapsTable.createdAt
