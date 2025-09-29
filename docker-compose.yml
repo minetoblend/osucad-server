@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    volumes:
+      - postgres_data:/data/postgres
+    ports:
+      - '5432:5432'
+    environment:
+      PGDATA: /data/postgres
+      POSTGRES_USER: osucad
+      POSTGRES_PASSWORD: osucad
+      POSTGRES_DB: osucad
+
+volumes:
+  postgres_data:

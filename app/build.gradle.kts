@@ -11,10 +11,6 @@ application {
     mainClass = "io.ktor.server.netty.EngineMain"
 }
 
-ktor {
-    development.set(true)
-}
-
 sourceSets {
     create("scripts") {
         kotlin {
@@ -28,7 +24,7 @@ sourceSets {
 
 configurations {
     named("scriptsImplementation") {
-        extendsFrom(configurations["implementation"])
+        extendsFrom(configurations.implementation.get())
     }
 }
 
