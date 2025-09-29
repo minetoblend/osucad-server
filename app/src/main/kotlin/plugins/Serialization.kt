@@ -9,7 +9,7 @@ import kotlinx.serialization.json.Json
 
 @Serializable
 data class SerializationConfig(
-    val prettyPrint: Boolean = true
+    val prettyPrint: Boolean = false
 )
 
 fun Application.configureSerialization(

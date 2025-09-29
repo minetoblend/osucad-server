@@ -10,6 +10,7 @@ import io.ktor.server.config.*
 import io.ktor.server.plugins.di.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.transactions.transactionManager
 
 @Serializable
 class DatabaseConfig(
@@ -25,6 +26,8 @@ fun Application.configureDatabase(config: DatabaseConfig = property("database"))
     val database = Database.connect(dataSource)
 
     createFlyway(dataSource).migrate()
+
+    log.info("default transaction level: ${database.transactionManager.defaultIsolationLevel}")
 
     dependencies {
         provide<Database> { database }

@@ -80,6 +80,7 @@ tasks.named("buildOpenApi") {
 kotlin {
     compilerOptions {
         optIn.addAll(
+            "kotlin.time.ExperimentalTime",
             "org.jetbrains.exposed.v1.core.ExperimentalDatabaseMigrationApi"
         )
     }

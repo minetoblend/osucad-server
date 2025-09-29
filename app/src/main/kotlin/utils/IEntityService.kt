@@ -1,5 +1,6 @@
 package com.osucad.server.utils
 
+import com.osucad.server.dao.User
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.dao.Entity
@@ -25,6 +26,11 @@ interface IEntityService<ID : Any, T : Entity<ID>> {
         limit: Long? = null,
         condition: () -> Op<Boolean>
     ): List<T>
+
+    suspend fun createOrUpdate(
+        id: ID,
+        block: T.() -> Unit,
+    ): T
 }
 
 open class EntityService<ID : Any, T : Entity<ID>>(
@@ -57,6 +63,13 @@ open class EntityService<ID : Any, T : Entity<ID>>(
             .offset(offset)
             .limit(limit)
             .with(*relations).toList()
+    }
+
+    override suspend fun createOrUpdate(
+        id: ID,
+        block: T.() -> Unit,
+    ) = transaction {
+        entityClass.createOrUpdate(id, block)
     }
 }
 

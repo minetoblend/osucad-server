@@ -2,15 +2,17 @@ package com.osucad.server.modules.users
 
 
 import com.osucad.server.security.currentUser
+import com.osucad.server.security.userId
 import com.osucad.server.utils.apiRoute
 import com.osucad.server.utils.orNotFound
+import com.osucad.server.utils.respondFailure
+import com.osucad.server.utils.respondSuccess
 import com.osucad.server.utils.sendAsResponse
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.plugins.di.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
-import io.ktor.utils.io.KtorDsl
 
 fun Application.userRouting() {
     val userService: IUserService by dependencies
@@ -24,13 +26,28 @@ fun Application.userRouting() {
                         .sendAsResponse()
                 }
 
-                get("{id}") {
-                    val id: Int by call.pathParameters
+                get("{user}") {
+                    val user: Int by call.pathParameters
 
-                    userService.findById(id)
+                    userService.findById(user)
                         .orNotFound()
                         .toDto()
                         .sendAsResponse()
+                }
+            }
+
+            apiRoute("friends") {
+                put("{friend}") {
+                    val friend: Int by call.parameters
+
+                    when (userService.addFriend(call.userId, friend)) {
+                        AddFriendResult.Success -> call.respondSuccess()
+                        AddFriendResult.IsBlocked -> call.respondFailure("User is blocked")
+                    }
+                }
+
+                delete("{friend}") {
+                    val friend: Int by call.parameters
                 }
             }
         }
