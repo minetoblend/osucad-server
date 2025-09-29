@@ -1,37 +1,39 @@
 package com.osucad.server.database
 
+import com.osucad.server.modules.documents.DocumentSummary
+import com.osucad.server.utils.UuidTable
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.core.dao.id.CompositeIdTable
 import org.jetbrains.exposed.v1.core.dao.id.IntIdTable
-import org.jetbrains.exposed.v1.core.dao.id.UUIDTable
+import org.jetbrains.exposed.v1.json.json
 
-object BlobsTable : UUIDTable("blobs") {
+object BlobsTable : UuidTable("blobs") {
     val size = integer("size")
 }
 
+typealias DocumentId = Int
+
 object DocumentsTable : IntIdTable("documents")
 
-object DocumentSnapshotsTable : CompositeIdTable("document_snapshots") {
+object DocumentSnapshotsTable : IntIdTable("document_snapshots") {
     val documentId = reference("document_id", DocumentsTable.id)
-    val sequenceNumber = long("sequence_number").entityId()
+    val sequenceNumber = long("sequence_number")
 
-    val summaryBlobId = reference("summary_blob_id", BlobsTable.id)
+    val summary = json<DocumentSummary>("summary", Json)
 
     init {
-        addIdColumn(documentId)
+        uniqueIndex(documentId, sequenceNumber)
     }
-
-
-    override val primaryKey = PrimaryKey(documentId, sequenceNumber)
 }
 
 object DocumentBlobUsagesTable : CompositeIdTable("document_blob_usages") {
-    val documentId = reference("document_id", DocumentsTable.id)
+    val snapshotId = reference("snapshot_id", DocumentSnapshotsTable.id)
     val blobId = reference("blob_id", BlobsTable.id)
 
     init {
-        addIdColumn(documentId)
+        addIdColumn(snapshotId)
         addIdColumn(blobId)
     }
 
-    override val primaryKey = PrimaryKey(documentId, blobId)
+    override val primaryKey = PrimaryKey(snapshotId, blobId)
 }

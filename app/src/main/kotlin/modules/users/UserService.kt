@@ -2,9 +2,11 @@
 
 package com.osucad.server.modules.users
 
+import com.osucad.osuapi.models.OsuApiUser
 import com.osucad.server.dao.User
 import com.osucad.server.dao.UserRelation
 import com.osucad.server.database.UserRelationsTable
+import com.osucad.server.database.UsersTable
 import com.osucad.server.database.userRelationId
 import com.osucad.server.modules.users.UserRelationKind.Blocked
 import com.osucad.server.modules.users.UserRelationKind.Friend
@@ -12,11 +14,16 @@ import com.osucad.server.utils.EntityService
 import com.osucad.server.utils.IEntityService
 import com.osucad.server.utils.IsolationLevel.RepeatableRead
 import com.osucad.server.utils.TransactionProvider
+import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.upsert
+import org.slf4j.LoggerFactory
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 interface IUserService : IEntityService<Int, User> {
+    fun getForLoginWithOsu(osuUser: OsuApiUser): User
+
     fun addFriend(userId: Int, otherUserId: Int): AddFriendResult
 
     fun removeFriend(userId: Int, otherUserId: Int): Boolean
@@ -36,8 +43,11 @@ sealed interface AddFriendResult {
 }
 
 
-class UserService(private val transaction: TransactionProvider) : IUserService,
+class UserService(private val transaction: TransactionProvider) :
+    IUserService,
     IEntityService<Int, User> by EntityService(User, transaction) {
+
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun addFriend(userId: Int, otherUserId: Int): AddFriendResult =
         transaction(transactionIsolation = RepeatableRead) {
@@ -91,6 +101,31 @@ class UserService(private val transaction: TransactionProvider) : IUserService,
 
     override fun isBlocked(userId: Int, otherUserId: Int): Boolean = transaction {
         UserRelation.find(userId, otherUserId)?.kind == Blocked
+    }
+
+    override fun getForLoginWithOsu(osuUser: OsuApiUser): User = transaction(transactionIsolation = RepeatableRead) {
+        when (val user = User.find { UsersTable.osuUserId eq osuUser.id }.singleOrNull()) {
+            null ->
+                User.new {
+                    username = osuUser.username
+                    osuUserId = osuUser.id
+                    lastLoginTime = Clock.System.now()
+                }.also { user ->
+                    logger.info(
+                        "Created new user {} for osu user {} (osu user id={})",
+                        user.id,
+                        osuUser.username,
+                        osuUser.id
+                    )
+                }
+
+            else ->
+                user.apply {
+                    username = osuUser.username
+                    osuUserId = osuUser.id
+                    lastLoginTime = Clock.System.now()
+                }
+        }
     }
 }
 

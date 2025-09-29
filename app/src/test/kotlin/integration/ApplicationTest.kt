@@ -12,7 +12,7 @@ class ApplicationTest : FunSpec({
     test("it should work") {
         testApplication {
             environment {
-                config = ApplicationConfig("application.yaml")
+                config = ApplicationConfig("application.conf")
             }
 
             application {

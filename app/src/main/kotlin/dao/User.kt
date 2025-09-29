@@ -15,6 +15,7 @@ class User(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<User>(UsersTable)
 
     var username by UsersTable.username
+    var osuUserId by UsersTable.osuUserId
     var lastLoginTime by UsersTable.lastLoginTime
 
     val beatmapSets by BeatmapSet referrersOn BeatmapSetsTable.creatorId

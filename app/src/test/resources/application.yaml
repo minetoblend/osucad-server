@@ -1,4 +1,0 @@
-oauth:
-  redirectUrl: http://localhost:8080
-  clientId: bar
-  clientSecret: baz

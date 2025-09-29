@@ -1,7 +1,9 @@
 package com.osucad.server
 
+import com.osucad.server.modules.beatmaps.beatmapsModule
 import com.osucad.server.modules.osu.osuModule
 import com.osucad.server.modules.users.usersModule
+import com.osucad.server.modules.documents.documentsModule
 import com.osucad.server.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -21,6 +23,8 @@ fun Application.module() {
 
     usersModule()
     osuModule()
+    beatmapsModule()
+    documentsModule()
 
     routing {
         get {

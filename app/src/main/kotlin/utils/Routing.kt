@@ -10,4 +10,3 @@ fun Route.apiRoute(build: Route.() -> Unit): Route =
 @KtorDsl
 fun Route.apiRoute(path: String, build: Route.() -> Unit): Route =
     apiRoute { route(path, build) }
-

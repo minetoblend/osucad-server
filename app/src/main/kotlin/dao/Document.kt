@@ -17,10 +17,22 @@ class Document(id: EntityID<Int>) : IntEntity(id) {
     val snapshots by DocumentSnapshot referrersOn DocumentSnapshotsTable.documentId orderBy (DocumentSnapshotsTable.sequenceNumber to SortOrder.DESC)
 }
 
-class DocumentSnapshot(id: EntityID<CompositeID>) : CompositeEntity(id) {
-    companion object : CompositeEntityClass<DocumentSnapshot>(DocumentSnapshotsTable)
+class DocumentSnapshot(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<DocumentSnapshot>(DocumentSnapshotsTable)
 
     var document by Document referencedOn DocumentSnapshotsTable.documentId
+    var documentId by DocumentSnapshotsTable.documentId
+
     var sequenceNumber by DocumentSnapshotsTable.sequenceNumber
-    val blobs by Blob via DocumentBlobUsagesTable
+
+    var summary by DocumentSnapshotsTable.summary
+
+    var referencedBlobs by Blob via DocumentBlobUsagesTable
+}
+
+class DocumentBlobUsage(id: EntityID<CompositeID>) : CompositeEntity(id) {
+    companion object : CompositeEntityClass<DocumentBlobUsage>(DocumentBlobUsagesTable)
+
+    var snapshot by DocumentSnapshot referencedOn DocumentBlobUsagesTable.snapshotId
+    var blob by Blob referencedOn DocumentBlobUsagesTable.blobId
 }

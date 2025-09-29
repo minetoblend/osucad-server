@@ -8,6 +8,7 @@ import org.jetbrains.exposed.v1.datetime.timestamp
 
 object UsersTable : IntIdTable("users") {
     val username = varchar("username", 255)
+    val osuUserId = integer("osu_user_id").nullable().uniqueIndex()
     val lastLoginTime = timestamp("last_login_time").nullable()
 }
 

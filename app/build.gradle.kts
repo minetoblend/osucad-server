@@ -36,6 +36,7 @@ dependencies {
     implementation(ktorLibs.server.cors)
     implementation(ktorLibs.server.di)
     implementation(ktorLibs.server.auth)
+    implementation(ktorLibs.server.auth.jwt)
     implementation(ktorLibs.server.sessions)
     implementation(ktorLibs.server.netty)
     implementation(ktorLibs.server.config.yaml)
@@ -52,6 +53,7 @@ dependencies {
     implementation(libs.micrometer.registry.prometheus)
     implementation(libs.logback)
     implementation(libs.exposed.core)
+    implementation(libs.exposed.json)
     implementation(libs.exposed.dao)
     implementation(libs.exposed.kotlin.datetime)
     implementation(libs.exposed.jdbc)
@@ -81,7 +83,8 @@ kotlin {
     compilerOptions {
         optIn.addAll(
             "kotlin.time.ExperimentalTime",
-            "org.jetbrains.exposed.v1.core.ExperimentalDatabaseMigrationApi"
+            "kotlin.uuid.ExperimentalUuidApi",
+            "org.jetbrains.exposed.v1.core.ExperimentalDatabaseMigrationApi",
         )
     }
 }

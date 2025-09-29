@@ -6,8 +6,13 @@ import io.ktor.server.plugins.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import io.ktor.util.reflect.*
+import org.jetbrains.exposed.v1.core.Column
+import org.jetbrains.exposed.v1.core.dao.id.EntityID
+import org.jetbrains.exposed.v1.core.dao.id.IdTable
+import java.util.UUID
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+import kotlin.uuid.Uuid
 
 fun <T> T?.orNotFound(): T = this ?: throw NotFoundException()
 
@@ -65,3 +70,4 @@ class QueryParameter<out T>(
 }
 
 fun <T> Parameter<List<T>>.maxLength(length: Int) = validate("Exceeded max length ($length)") { it.size <= length }
+

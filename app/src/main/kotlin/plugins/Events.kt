@@ -4,6 +4,7 @@ package com.osucad.server.plugins
 
 import io.ktor.events.EventDefinition
 import io.ktor.server.application.*
+import io.ktor.server.plugins.di.dependencies
 import io.ktor.util.*
 import io.ktor.util.collections.*
 import io.ktor.util.internal.*
@@ -14,7 +15,13 @@ val EventBusKey = AttributeKey<EventBus>("EventBus")
 
 val Application.eventBus: EventBus
     get() {
-        return attributes.computeIfAbsent(EventBusKey) { EventBus() }
+        return attributes.computeIfAbsent(EventBusKey) {
+            EventBus().also {
+                dependencies {
+                    provide<EventBus> { it }
+                }
+            }
+        }
     }
 
 class EventBus {
