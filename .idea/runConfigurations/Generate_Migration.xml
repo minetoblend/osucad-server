@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Generate Migration Script" type="JetRunConfigurationType">
-    <option name="MAIN_CLASS_NAME" value="com.osucad.server.database.GenerateMigrationScriptKt" />
-    <module name="osucad-server.app.main" />
+  <configuration default="false" name="Generate Migration" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="GenerateMigrationKt" />
+    <module name="osucad-server.app.scripts" />
     <option name="PROGRAM_PARAMETERS" value="&quot;$Prompt:Migration Name$&quot;" />
     <shortenClasspath name="NONE" />
     <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />

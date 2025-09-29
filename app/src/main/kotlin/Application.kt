@@ -2,12 +2,7 @@ package com.osucad.server
 
 import com.osucad.server.modules.osu.osuModule
 import com.osucad.server.modules.users.usersModule
-import com.osucad.server.plugins.configureDatabase
-import com.osucad.server.plugins.configureErrorHandling
-import com.osucad.server.plugins.configureHTTP
-import com.osucad.server.plugins.configureMonitoring
-import com.osucad.server.plugins.configureSecurity
-import com.osucad.server.plugins.configureSerialization
+import com.osucad.server.plugins.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

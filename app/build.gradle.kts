@@ -15,6 +15,23 @@ ktor {
     development.set(true)
 }
 
+sourceSets {
+    create("scripts") {
+        kotlin {
+            srcDir("src/srcipts/kotlin")
+        }
+
+        compileClasspath += sourceSets.main.get().output
+        runtimeClasspath += sourceSets.main.get().output
+    }
+}
+
+configurations {
+    named("scriptsImplementation") {
+        extendsFrom(configurations["implementation"])
+    }
+}
+
 dependencies {
     implementation(project(":libs:osu-api"))
 
@@ -53,8 +70,21 @@ dependencies {
 
     testImplementation(libs.bundles.test.ktor)
     testImplementation(ktorLibs.server.testHost)
+
+    sourceSets.named("scripts") {
+        implementation(libs.testcontainers.core)
+        implementation(libs.testcontainers.postgres)
+    }
 }
 
 tasks.named("buildOpenApi") {
     enabled = false
+}
+
+kotlin {
+    compilerOptions {
+        optIn.addAll(
+            "org.jetbrains.exposed.v1.core.ExperimentalDatabaseMigrationApi"
+        )
+    }
 }
